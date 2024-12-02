@@ -1,0 +1,5 @@
+# Ultralytics requirements
+ultralytics
+flask
+einops
+flask_restful
