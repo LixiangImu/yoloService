@@ -1,8 +1,12 @@
 services:
   video-detection:
-    build: .
+    container_name: yolo-detection-container
+    image: yolo-detection-image:v1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "192.168.60.1:5000:5000"    # 替换为你的物理机IP
     volumes:
       - ./static:/app/static
     environment:

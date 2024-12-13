@@ -76,7 +76,7 @@ class VideoProcessor:
         truck_top = truck_box[1]
         truck_bottom = truck_box[3]
         
-        # 计算卡车下1/3区域的起始y坐标
+        # 计算卡车下1/3区域���起始y坐标
         truck_height = truck_bottom - truck_top
         truck_danger_zone = truck_bottom - (truck_height / 3)
         
@@ -239,9 +239,7 @@ class HealthCheck(Resource):
     """健康检查接口"""
     def get(self):
         """处理健康检查请求"""
-        return _create_response(
-            message="服务器运行正常"
-        )
+        return {'status': 'success', 'message': '服务器运行正常'}
 
 class VideoAnalysis(Resource):
     """视频分析接口"""
@@ -301,8 +299,8 @@ def _create_response(message, data=None, success=True, status_code=200):
     return response, status_code
 
 # 注册API路由
-api.add_resource(HealthCheck, '/api/v1/health', endpoint='healthcheck')
-api.add_resource(VideoAnalysis, '/api/v1/video/analyze', endpoint='videoanalysis')
+api.add_resource(HealthCheck, '/api/v1/health')
+api.add_resource(VideoAnalysis, '/api/v1/video/analyze')
 
 if __name__ == '__main__':
     logger.info("正在启动服务器...")
