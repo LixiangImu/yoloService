@@ -16,18 +16,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
-api = Api(app)
-config = Config()
-
-# Flask配置
-app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = config.MAX_CONTENT_LENGTH
-
-# 确保必要的文件夹存在
-os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(config.ANOMALY_FOLDER, exist_ok=True)
-
 class VideoProcessor:
     def __init__(self):
         self.model = None
@@ -76,7 +64,7 @@ class VideoProcessor:
         truck_top = truck_box[1]
         truck_bottom = truck_box[3]
         
-        # 计算卡车下1/3区域���起始y坐标
+        # 计算卡车下1/3区域起始y坐标
         truck_height = truck_bottom - truck_top
         truck_danger_zone = truck_bottom - (truck_height / 3)
         
@@ -232,8 +220,26 @@ class VideoProcessor:
             }
         }
 
-# 创建视频处理器实例
+app = Flask(__name__)
+api = Api(app)
+config = Config()
+
+# 初始化时记录日志
+logger.info("正在启动服务器...")
+
+# 初始化视频处理器
 video_processor = VideoProcessor()
+logger.info("正在加载模型...")
+video_processor.init_model()
+logger.info("模型加载完成")
+
+# Flask配置
+app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = config.MAX_CONTENT_LENGTH
+
+# 确保必要的文件夹存在
+os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(config.ANOMALY_FOLDER, exist_ok=True)
 
 class HealthCheck(Resource):
     """健康检查接口"""
@@ -303,7 +309,5 @@ api.add_resource(HealthCheck, '/api/v1/health')
 api.add_resource(VideoAnalysis, '/api/v1/video/analyze')
 
 if __name__ == '__main__':
-    logger.info("正在启动服务器...")
-    video_processor.init_model()
     app.run(host='0.0.0.0', port=config.SERVER_PORT, debug=False)
     
