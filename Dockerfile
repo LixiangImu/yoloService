@@ -14,6 +14,7 @@ COPY requirements.txt .
 
 # 安装Python依赖
 RUN pip install -r requirements.txt
+RUN pip install gunicorn
 
 # 明确复制配置文件和应用文件
 COPY config.py /app/
@@ -29,5 +30,5 @@ RUN pip install -r requirements.txt
 # 暴露端口
 EXPOSE 5000
 
-# 启动服务
-CMD ["python", "app_Service.py"]
+# 使用 gunicorn 启动
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app_Service:app"]
